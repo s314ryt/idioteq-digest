@@ -28,5 +28,11 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add seen.json || true
-          git commit -m "update seen state [skip ci]" || echo "brak zmian"
-          git push || echo "nic do pusha"
+          git commit -m "update seen state [skip ci]" || { echo "brak zmian"; exit 0; }
+          for i in 1 2 3 4 5; do
+            git push && exit 0
+            echo "push odrzucony ($i) — rebase na zdalne i ponawiam"
+            git pull --rebase -X ours origin main || git rebase --abort || true
+            sleep 3
+          done
+          echo "BLAD: nie zapisano stanu po 5 probach"; exit 1
