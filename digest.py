@@ -18,7 +18,7 @@ import feedparser
 socket.setdefaulttimeout(20)
 HERE = os.path.dirname(os.path.abspath(__file__))
 SEEN_PATH = os.path.join(HERE, "seen.json")
-UA = {"User-Agent": "Mozilla/5.0 (compatible; IDIOTEQ-Digest/1.0)"}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 MAX_SEEN = 40000          # ile ID trzymamy (auto-prune)
 IMG_FALLBACK_LIMIT = 120  # ile og:image dociagnac na run (tylko dla wysylanych)
 

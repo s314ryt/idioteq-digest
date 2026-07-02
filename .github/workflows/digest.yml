@@ -1,7 +1,7 @@
 name: IDIOTEQ hourly digest
 on:
   schedule:
-    - cron: "0 * * * *"      # co godzine (UTC); GitHub moze opoznic - stan gwarantuje szczelnosc
+    - cron: "*/30 * * * *"   # co 30 min (UTC); GitHub moze opoznic - stan gwarantuje szczelnosc
   workflow_dispatch: {}       # reczne odpalenie z panelu Actions
 permissions:
   contents: write             # do commitowania seen.json
