@@ -77,10 +77,10 @@ def fetch(feed):
                 out.append({"id":entry_id(e),"cat":cname,"src":src,
                     "title":clean(e.get("title",""),160),"link":e.get("link",""),
                     "summary":clean(e.get("summary","")),"img":img_from(e),"dt":dt})
-            return out
+            return out, ("ok" if out else "empty"), (ftitle or url)
         except Exception:
             time.sleep(1)
-    return out
+    return out, "fail", (ftitle or url)
 
 def og_image(url):
     try:
@@ -101,7 +101,7 @@ def ago(dt):
     if s<86400: return f"{int(s//3600)}h"
     return f"{int(s//86400)}d"
 
-def render(items):
+def render(items, stats):
     now=datetime.now(timezone.utc); rows=[]
     for it in items:
         if it["img"]:
@@ -112,7 +112,7 @@ def render(items):
         if ago(it["dt"]): meta+=f' &nbsp;/&nbsp; {ago(it["dt"])}'
         rows.append(f'<tr><td style="padding:14px 0;border-bottom:1px solid #ececec"><table cellpadding="0" cellspacing="0" width="100%"><tr><td width="112" valign="top" style="padding-right:16px">{thumb}</td><td valign="top"><a href="{html.escape(it["link"])}" style="color:#111;text-decoration:none;font-size:17px;font-weight:600;line-height:1.3">{html.escape(it["title"])}</a><div style="color:#8a8a8a;font-size:13px;margin:5px 0 6px">{meta} <span style="color:#c9c9c9">&middot; {html.escape(it["cat"])}</span></div><div style="color:#6b6b6b;font-size:14px;line-height:1.45">{html.escape(it["summary"])}</div></td></tr></table></td></tr>')
     body="".join(rows)
-    return f'<!doctype html><html><body style="margin:0;background:#f6f6f6"><table cellpadding="0" cellspacing="0" width="100%" style="background:#f6f6f6"><tr><td align="center" style="padding:24px 12px"><table cellpadding="0" cellspacing="0" width="640" style="max-width:640px;background:#fff;border-radius:14px;padding:28px 32px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding-bottom:8px"><span style="font-size:22px;font-weight:700;color:#111">IDIOTEQ &middot; Feed digest</span><div style="color:#8a8a8a;font-size:13px;margin-top:4px">{len(items)} nowych &middot; {now.strftime("%Y-%m-%d %H:%M UTC")}</div></td></tr><tr><td><table cellpadding="0" cellspacing="0" width="100%">{body}</table></td></tr><tr><td style="padding-top:18px;color:#b0b0b0;font-size:12px">Automatyczny digest z Twoich feedów. Nowe wrzuty od ostatniego maila.</td></tr></table></td></tr></table></body></html>'
+    return f'<!doctype html><html><body style="margin:0;background:#f6f6f6"><table cellpadding="0" cellspacing="0" width="100%" style="background:#f6f6f6"><tr><td align="center" style="padding:24px 12px"><table cellpadding="0" cellspacing="0" width="640" style="max-width:640px;background:#fff;border-radius:14px;padding:28px 32px;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"><tr><td style="padding-bottom:8px"><span style="font-size:22px;font-weight:700;color:#111">IDIOTEQ &middot; Feed digest</span><div style="color:#8a8a8a;font-size:13px;margin-top:4px">{len(items)} nowych &middot; {now.strftime("%Y-%m-%d %H:%M UTC")}</div></td></tr><tr><td><table cellpadding="0" cellspacing="0" width="100%">{body}</table></td></tr><tr><td style="padding-top:18px;border-top:2px solid #ececec;color:#9a9a9a;font-size:12px;line-height:1.7"><b style="color:#6b6b6b">Sanity check</b> &nbsp;&middot;&nbsp; źródła: {stats["ok"]}/{stats["total"]} odpowiedziało &nbsp;&middot;&nbsp; {stats["empty"]} pustych/martwych &nbsp;&middot;&nbsp; {stats["fail"]} błędów<br>pobrano {stats["items"]} wpisów &nbsp;&middot;&nbsp; {len(items)} nowych w tym mailu &nbsp;&middot;&nbsp; zrzut {now.strftime("%Y-%m-%d %H:%M UTC")}</td></tr></table></td></tr></table></body></html>'
 
 def send_mail(subject, html_body):
     user=os.environ["MAIL_USER"]; pw=os.environ["MAIL_PASS"]; to=os.environ.get("MAIL_TO",user)
@@ -127,16 +127,22 @@ def send_mail(subject, html_body):
 def main():
     feeds=load_feeds()
     print(f"Feedów: {len(feeds)}", flush=True)
-    items=[]
+    items=[]; stats={"total":len(feeds),"ok":0,"empty":0,"fail":0,"dead":[]}
     with ThreadPoolExecutor(max_workers=32) as ex:
         futs=[ex.submit(fetch,f) for f in feeds]
-        for fut in as_completed(futs): items+=fut.result()
+        for fut in as_completed(futs):
+            res,status,name=fut.result()
+            items+=res
+            stats[status]=stats.get(status,0)+1
+            if status!="ok": stats["dead"].append(f"{name} [{status}]")
     # dedupe po id/link w ramach runu
     uniq={}
     for it in items:
         k=it["id"] or it["link"]
         if k and k not in uniq: uniq[k]=it
     items=list(uniq.values())
+    stats["items"]=len(items)
+    print(f"Źródła OK:{stats['ok']} puste:{stats['empty']} błędy:{stats['fail']} / {stats['total']}", flush=True)
 
     seen = json.load(open(SEEN_PATH)) if os.path.exists(SEEN_PATH) else None
     first_run = seen is None
@@ -168,8 +174,8 @@ def main():
             if img: it["img"]=img
     subject=f"IDIOTEQ digest — {len(new)} nowych"
     if os.environ.get("MAIL_DRY"):
-        open(os.path.join(HERE,"dry_preview.html"),"w").write(render(new)); print("DRY: zapisano dry_preview.html"); return
-    send_mail(subject, render(new))
+        open(os.path.join(HERE,"dry_preview.html"),"w").write(render(new, stats)); print("DRY: zapisano dry_preview.html"); return
+    send_mail(subject, render(new, stats))
     print(f"Wyslano {len(new)} wpisow.", flush=True)
 
 if __name__=="__main__":
