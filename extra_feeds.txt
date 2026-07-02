@@ -1,0 +1,5 @@
+# Ręcznie dodane RSS-y (poza Feedly). Format: KATEGORIA | NAZWA | URL_RSS
+# Dodawaj kolejne linie. Puste linie i # są ignorowane.
+Videos | YT Channel UCUuISIr | https://www.youtube.com/feeds/videos.xml?channel_id=UCUuISIrVxpm8nYCbBfCnFvw
+Videos | HardCore Worldwide | https://www.youtube.com/feeds/videos.xml?channel_id=UC1TRXhzgffReeSF9SYdFucw
+Videos | Coachella | https://www.youtube.com/feeds/videos.xml?channel_id=UCHF66aWLOxBW4l6VkSrS3cQ

@@ -1,0 +1,32 @@
+name: IDIOTEQ hourly digest
+on:
+  schedule:
+    - cron: "0 * * * *"      # co godzine (UTC); GitHub moze opoznic - stan gwarantuje szczelnosc
+  workflow_dispatch: {}       # reczne odpalenie z panelu Actions
+permissions:
+  contents: write             # do commitowania seen.json
+concurrency:
+  group: digest
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run digest
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
+          MAIL_TO:   ${{ secrets.MAIL_TO }}
+        run: python digest.py
+      - name: Commit state
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add seen.json || true
+          git commit -m "update seen state [skip ci]" || echo "brak zmian"
+          git push || echo "nic do pusha"
