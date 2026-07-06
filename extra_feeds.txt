@@ -19,3 +19,6 @@ Videos | Montana Media | https://www.youtube.com/feeds/videos.xml?channel_id=UC4
 Videos | Hola Soy Keto | https://www.youtube.com/feeds/videos.xml?channel_id=UCabhMugHn0d5FybCw2XriTA
 Videos | Sad But True | https://www.youtube.com/feeds/videos.xml?channel_id=UCx3YqOp3C6aENmSA8CE4r3g
 Videos | Old Towne Productions | https://www.youtube.com/feeds/videos.xml?channel_id=UCSdLr_XYTc81klh3y9gVsMw
+Social | The Mosh Network (IG) | https://rss.app/feeds/FTkmLMJZRgc7I6pw.xml
+Social | 23punk (IG) | https://rss.app/feeds/fRAhjZSNYF3sW8Gf.xml
+IDIOTEQ | IDIOTEQ.com | https://idioteq.com/feed/
