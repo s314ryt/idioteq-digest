@@ -22,3 +22,14 @@ Videos | Old Towne Productions | https://www.youtube.com/feeds/videos.xml?channe
 Social | The Mosh Network (IG) | https://rss.app/feeds/FTkmLMJZRgc7I6pw.xml
 Social | 23punk (IG) | https://rss.app/feeds/fRAhjZSNYF3sW8Gf.xml
 IDIOTEQ | IDIOTEQ.com | https://idioteq.com/feed/
+Services | Chicago Reader | https://chicagoreader.com/feed/
+Services | GORILLA VS. BEAR | https://gorillavsbear.net/feed/
+Services | Metal Storm news | https://www.metalstorm.ee/rss/news.xml
+Services | Magnetic Magazine | https://magneticmag.com/feed/
+Services | Collective Zine | https://collective-zine.co.uk/feed/
+Services | SPIN | https://spinmagazine.com/feed/
+Services | Rolling Stone | https://rollingstone.com/feed/
+Services | Rock Sound | https://rocksound.tv/news/feed/
+Services | AMP Magazine | https://ampmagazine.com/feed/
+Services | Alternative Press Magazine | https://altpress.com/feed/
+Sources | ARREST RECORDS | https://arrestrecords.bigcartel.com/products.rss
