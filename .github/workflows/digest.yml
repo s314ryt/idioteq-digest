@@ -1,8 +1,6 @@
 name: IDIOTEQ hourly digest
 on:
-  schedule:
-    - cron: "*/30 * * * *"   # co 30 min (UTC); GitHub moze opoznic - stan gwarantuje szczelnosc
-  workflow_dispatch: {}       # reczne odpalenie z panelu Actions
+  workflow_dispatch: {}       # wyzwalany co 30 min przez cron-job.org (i recznie); wbudowany cron usuniety, bo kolidowal
 permissions:
   contents: write             # do commitowania seen.json
 concurrency:
