@@ -33,3 +33,6 @@ Services | Rock Sound | https://rocksound.tv/news/feed/
 Services | AMP Magazine | https://ampmagazine.com/feed/
 Services | Alternative Press Magazine | https://altpress.com/feed/
 Sources | ARREST RECORDS | https://arrestrecords.bigcartel.com/products.rss
+Services | 105.7 The Point | https://www.1057thepoint.com/feed/
+Services | Stereoboard | https://www.stereoboard.com/index2.php?option=com_rss&feed=RSS2.0&no_html=1
+Services | Huck Magazine | https://www.huckmag.com/feed/
